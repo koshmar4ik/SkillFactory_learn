@@ -1,0 +1,18 @@
+{% extends 'flatpages/default.html' %}
+
+{% block title %}
+Article
+{% endblock title %}
+
+{% block content %}
+   {% if article %}
+   <h1>{{ article.head }}</h1>
+   <hr>
+       <table> <!-- Начинаем описывать таблицу -->
+               <tr>{{ article.posts }}</tr>
+       </table> <!-- ... и таблицы -->
+   <h2>                                  {{ article.create_time | date:'M d Y' }}</h2>
+   {% else %}
+       <h3>Пока еще ничего оне опубликовано!</h3>
+   {% endif %}
+{% endblock content %}
