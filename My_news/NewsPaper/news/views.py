@@ -2,27 +2,64 @@ from django.shortcuts import render
 from django.template.defaultfilters import length
 
 # Create your views here.
-from .models import Post
-from django.views.generic import ListView, DetailView
+from .models import *
+from django.views.generic import ListView, DetailView, CreateView, UpdateView, DeleteView
+from .filters import PostFilter
+from .forms import News
+from django.urls import reverse_lazy
+
 
 class Posts(ListView):
-    # Указываем модель, объекты которой мы будем выводить
     model = Post
-    # Поле, которое будет использоваться для сортировки объектов
     ordering = '-create_time'
-    # Указываем имя шаблона, в котором будут все инструкции о том,
-    # как именно пользователю должны быть показаны наши объекты
     template_name = 'news.html'
-    # Это имя списка, в котором будут лежать все объекты.
-    # Его надо указать, чтобы обратиться к списку объектов в html-шаблоне.
     context_object_name = 'post'
+    paginate_by = 10
+
+    def get_queryset(self):
+        queryset = super().get_queryset()
+        self.filterset = PostFilter(self.request.GET, queryset)
+        return self.filterset.qs
+
+    def get_context_data(self, **kwargs):
+        context = super().get_context_data(**kwargs)
+        context['filterset'] = self.filterset
+        return context
 
 
 class NewsDetail(DetailView):
-    # Модель всё та же, но мы хотим получать информацию по отдельному товару
     model = Post
-    # Используем другой шаблон — product.html
     template_name = 'article.html'
-    # Название объекта, в котором будет выбранный пользователем продукт
     context_object_name = 'article'
 
+
+class Create(CreateView):
+    form_class = News
+    model = Post
+    template_name = 'create.html'
+
+    def form_valid(self, form):
+        news = form.save(commit = False)
+        context = self.get_context_data()
+        if context["types"] == "Новость":
+            news.category_type = "ns"
+        else:
+            news.category_type = "ae"
+        return super().form_valid(form)
+
+    def get_context_data(self, **kwargs):
+        context = super().get_context_data(**kwargs)
+        parts = [p for p in self.request.path.split("/") if p]
+        context["types"] = "Новость" if parts[-2] == 'post' else "Статья"
+        return context
+
+
+class Editing(UpdateView):
+    form_class = News
+    model = Post
+    template_name = 'create.html'
+
+class Editing(DeleteView):
+    model = Post
+    template_name = 'delete.html'
+    success_url = reverse_lazy('head')

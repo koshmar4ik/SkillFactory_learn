@@ -1,5 +1,7 @@
 {% extends 'flatpages/default.html' %}
 
+{% load custom_filters %}
+
 {% block title %}
 Articles
 {% endblock title %}
@@ -8,7 +10,23 @@ Articles
 
     <h1>Все статьи</h1>
     <p>Колличество статей: {{ post|length }}</p>
+    <form action="" method="get">
+       {# Переменная, которую мы передали через контекст, может сгенерировать нам форму с полями #}
+       {{ filterset.form.as_p }}
+        <label for="start">Create time is greater than:</label>
+        <input
+            type="date"
+            id="start"
+            name="create_time__gt"
+            value="2018-07-22"
+            min="2026-01-01"
+            max="2100-12-31" />
+       {# Добавим кнопку отправки данных формы #}
+       <input type="submit" value="Найти" />
+    </form>
+
     <hr>
+
    {% if post %}
        <table> <!-- Начинаем описывать таблицу -->
            <tr> <!-- Добавляем строку -->
@@ -36,5 +54,25 @@ Articles
        </table> <!-- ... и таблицы -->
    {% else %}
        <h2>Пока еще ничего оне опубликовано!</h2>
+   {% endif %}
+ {# Информация о предыдущих страницах #}
+   {% if page_obj.has_previous %}
+       <a href="?page=1">1</a>
+       {% if page_obj.previous_page_number != 1 %}
+           ...
+           <a href="?page={{ page_obj.previous_page_number }}">{{ page_obj.previous_page_number }}</a>
+       {% endif %}
+   {% endif %}
+
+   {# Информация о текущей странице #}
+   {{ page_obj.number }}
+
+   {# Информация о следующих страницах #}
+   {% if page_obj.has_next %}
+       <a href="?page={{ page_obj.next_page_number }}">{{ page_obj.next_page_number }}</a>
+       {% if paginator.num_pages != page_obj.next_page_number %}
+           ...
+           <a href="?page={{ page_obj.paginator.num_pages }}">{{ page_obj.paginator.num_pages }}</a>
+       {% endif %}
    {% endif %}
 {% endblock content %}

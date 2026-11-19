@@ -1,6 +1,7 @@
 from django.db import models
 from django.contrib.auth.models import User
 from django.db.models import Sum
+from django.urls import reverse
 import re
 #from django.utils.text import truncate_words
 # Create your models here.
@@ -29,6 +30,9 @@ class Author(models.Model):
 
 class Category(models.Model):
     category = models.CharField(max_length=255, unique=True, default='Free')
+
+    def __str__(self) -> str:
+        return self.category
 
 
 class Post(models.Model):
@@ -59,6 +63,8 @@ class Post(models.Model):
         self.rating_post -= 1
         self.save()
 
+    def get_absolute_url(self):
+        return reverse('detail_news', kwargs={'pk': self.pk})
 
 class PostCategory(models.Model):
     post_link = models.ForeignKey(Post, on_delete=models.CASCADE)
