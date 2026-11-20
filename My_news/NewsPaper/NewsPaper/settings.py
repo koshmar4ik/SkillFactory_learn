@@ -43,6 +43,7 @@ INSTALLED_APPS = [
     'news',
     'accounts',
     'django_filters',
+    'sign',
 ]
 
 SITE_ID = 1
@@ -55,7 +56,7 @@ MIDDLEWARE = [
     'django.contrib.auth.middleware.AuthenticationMiddleware',
     'django.contrib.messages.middleware.MessageMiddleware',
     'django.middleware.clickjacking.XFrameOptionsMiddleware',
-    'django.contrib.flatpages.middleware.FlatpageFallbackMiddleware'
+    'django.contrib.flatpages.middleware.FlatpageFallbackMiddleware',
 ]
 
 ROOT_URLCONF = 'NewsPaper.urls'
@@ -134,3 +135,13 @@ DEFAULT_AUTO_FIELD = 'django.db.models.BigAutoField'
 STATICFILES_DIRS = [
     BASE_DIR / "static"
 ]
+
+#LOGIN_URL = '/accounts/login/'
+LOGIN_URL = '/sign/login/'
+LOGIN_REDIRECT_URL = '/'
+
+#ACCOUNT_EMAIL_REQUIRED = True
+#ACCOUNT_UNIQUE_EMAIL = True
+#ACCOUNT_USERNAME_REQUIRED = False
+#ACCOUNT_AUTHENTICATION_METHOD = 'email'
+#ACCOUNT_EMAIL_VERIFICATION = 'none'

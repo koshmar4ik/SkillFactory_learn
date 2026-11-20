@@ -1,5 +1,7 @@
 from django.shortcuts import render
 from django.template.defaultfilters import length
+from django.contrib.auth.mixins import LoginRequiredMixin
+from django.contrib.auth.mixins import PermissionRequiredMixin
 
 # Create your views here.
 from .models import *
@@ -33,7 +35,8 @@ class NewsDetail(DetailView):
     context_object_name = 'article'
 
 
-class Create(CreateView):
+class Create(PermissionRequiredMixin, CreateView):
+    permission_required = ('news.add_post')
     form_class = News
     model = Post
     template_name = 'create.html'
@@ -54,12 +57,13 @@ class Create(CreateView):
         return context
 
 
-class Editing(UpdateView):
+class Editing(LoginRequiredMixin, PermissionRequiredMixin, UpdateView):
+    permission_required = ('news.change_post')
     form_class = News
     model = Post
     template_name = 'create.html'
 
-class Editing(DeleteView):
+class Delete(DeleteView):
     model = Post
     template_name = 'delete.html'
     success_url = reverse_lazy('head')
